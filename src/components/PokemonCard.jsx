@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
-import { StyleSheet, Text, View, Image, ActivityIndicator } from "react-native"
+import { StyleSheet, Text, Image, ActivityIndicator, TouchableOpacity } from "react-native"
 import { useQuery } from "@tanstack/react-query";
-import { FetchFunction, fetchFunction } from "../utils/api";
+import { FetchFunction } from "../utils/api";
+import { useNavigation } from "@react-navigation/native";
 
 export const PokemonCard = ({ url, name }) => {
+
+    const navigation = useNavigation();
 
     //React Query necesita un array de identificadores, lo utiliza para saber si no hizo ya un Request al endpoint. Si ya se hizo un pedido de 'data' en cualquier componente, lo coteja
     // con los datos que tiene en cache y no hace la llamada nueva.
@@ -27,13 +30,13 @@ export const PokemonCard = ({ url, name }) => {
         })
     }, [url]) */
 
-    console.log(data)
+    /* console.log(data) */
 
     if( !data || error ) return null; //cambiamos y dejamos de usar los 'pokemon' por 'data'
     if( isLoading ) return <ActivityIndicator />;
 
     return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Detail', {name})}>
             <Image 
                 source={{
                     uri: data.sprites.other['official-artwork'].front_default
@@ -41,7 +44,7 @@ export const PokemonCard = ({ url, name }) => {
                 style={styles.image}
             />
             <Text style={styles.name}>{data.name}</Text>
-        </View>
+        </TouchableOpacity>
     )
 };
 

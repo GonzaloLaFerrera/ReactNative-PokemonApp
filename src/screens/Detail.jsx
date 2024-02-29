@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet } from "react-native";
 
-export function Detail() {
+export function Detail({ route }) {
+    const { name } = route.params;
     return(
         <View style={styles.container}>
-            <Text>Detail</Text>
+            <Text style={styles.text}>{name}</Text>
         </View>
     )
 };
@@ -15,6 +16,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     text: {
-        
+        fontSize: 40
     }
 });
