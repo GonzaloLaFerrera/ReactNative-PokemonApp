@@ -1,13 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 /* import { useEffect, useState } from 'react'; */
-import { StyleSheet, SafeAreaView, FlatList, View, ActivityIndicator } from 'react-native';
+import { Center, Spinner, FlatList } from 'native-base';
 import { PokemonCard } from '../components/PokemonCard';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { FetchAllPokemons } from '../utils/api';
 
 export default function Home() {
 
-  const { data, isFetching, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({ //cambiamos el isLoading por isFetching
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({ //cambiamos el isLoading por isFetching
     queryKey: ['pokemons'],
     queryFn: ({ pageParam }) => FetchAllPokemons(pageParam),
     getNextPageParam: (lastPage) => lastPage.next,
@@ -30,33 +30,31 @@ export default function Home() {
     }
   };
 
+  if (isLoading) return (
+    <Center flex={1}>
+      <Spinner size="lg" color="black" />
+    </Center>
+  )
   /* if(isFetching) return <ActivityIndicator />; */ //me daba problemas al cargar el spinner en el margen superior de la pantalla, me posicionaba hasta alla
 
   if(!data) return null;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar/>
       <FlatList
         data={data.pages.flatMap((page) => page.results)}
         renderItem={({item}) => (<PokemonCard url={item.url} name={item.name}/>)}
         keyExtractor={item => item.url}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={() => isFetchingNextPage ? <ActivityIndicator /> : null} //muestra un pequeño 'spinner' de ReactNative al pie de la lista si esta cargando
+        numColumns={2}
+        ListFooterComponent={() => isFetchingNextPage ? <Spinner mt="4" size="lg" color="black"/> : null} //muestra un pequeño 'spinner' de ReactNative al pie de la lista si esta cargando
         scrollsToTop={false}
+        _contentContainerStyle={{ p:2, bg:"white" }}
       />
-    </SafeAreaView>
+
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    /* marginTop: 60  */ // por alguna razon no funciona el SafeAreaView como debería y queda sobre la barra de estado de arriba en el display toda la data (COMENTADO POST NAVIGATION)
-  }
-});
 
   //VERSION SIN IMPLEMENTAR REACT QUERY
 
@@ -103,3 +101,30 @@ const styles = StyleSheet.create({
   );
 }; */
 
+
+
+// Version sin NATIVE BASE
+
+/* return (
+  <SafeAreaView style={styles.container}>
+    <StatusBar/>
+    <FlatList
+      data={data.pages.flatMap((page) => page.results)}
+      renderItem={({item}) => (<PokemonCard url={item.url} name={item.name}/>)}
+      keyExtractor={item => item.url}
+      onEndReached={loadMore}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={() => isFetchingNextPage ? <ActivityIndicator /> : null} //muestra un pequeño 'spinner' de ReactNative al pie de la lista si esta cargando
+      scrollsToTop={false}
+    />
+  </SafeAreaView>
+);
+};
+
+const styles = StyleSheet.create({
+container: {
+  flex: 1,
+  backgroundColor: '#fff',
+  /* marginTop: 60  */ // por alguna razon no funciona el SafeAreaView como debería y queda sobre la barra de estado de arriba en el display toda la data (COMENTADO POST NAVIGATION)
+//}
+//}); 

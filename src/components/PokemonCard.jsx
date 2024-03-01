@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
-import { StyleSheet, Text, Image, ActivityIndicator, TouchableOpacity } from "react-native"
+import { StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native"
 import { useQuery } from "@tanstack/react-query";
 import { FetchFunction } from "../utils/api";
 import { useNavigation } from "@react-navigation/native";
+import { Box, Heading, Image, Text, Hstack, Stack, Skeleton, Pressable, Center, AspectRatio, HStack } from "native-base";
+import { formatNumber, getTypeColor } from "../utils/helper";
 
 export const PokemonCard = ({ url, name }) => {
 
@@ -32,36 +34,86 @@ export const PokemonCard = ({ url, name }) => {
 
     /* console.log(data) */
 
+    if( isLoading ) return (
+        <Stack flex={1} space={2} borderRadius={10} m="1.5" p="4">
+            <Skeleton h={32}/>
+            <Skeleton.Text px={4}/>
+        </Stack>
+    )
     if( !data || error ) return null; //cambiamos y dejamos de usar los 'pokemon' por 'data'
-    if( isLoading ) return <ActivityIndicator />;
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Detail', {name})}>
-            <Image 
-                source={{
-                    uri: data.sprites.other['official-artwork'].front_default
-                }}
-                style={styles.image}
-            />
-            <Text style={styles.name}>{data.name}</Text>
-        </TouchableOpacity>
+        <Pressable flex={1} m="1.5" p="4" backgroundColor={getTypeColor(data.types[0].type.name) + '.500'} borderRadius={10} onPress={() => navigation.navigate('Detail', {name})}>
+            <Center>
+                <AspectRatio ratio={1} width="80%">
+                    <Image 
+                    source={{
+                        uri: data.sprites.other['official-artwork'].front_default
+                    }}
+                    alt="pokemon-image"
+                    />
+                </AspectRatio>
+            </Center>
+            <HStack justifyContent="space-between" mb={2}>
+                <Heading size="sm" color="white" textTransform="capitalize">{data.name}</Heading>
+                <Text color="white">#{formatNumber(data.id)}</Text>
+            </HStack>
+            <HStack>
+                {data.types.map((type) => (
+                    <Box 
+                        key={type.type.name} 
+                        backgroundColor={getTypeColor(type.type.name) + '.400'} 
+                        borderRadius={10} 
+                        px={2} 
+                        mr={1}
+                        _text={{
+                            color:"white",
+                            fontSize: 'xs'
+                        }}
+                    >
+                        {type.type.name}
+                    </Box>
+                ))}
+            </HStack>
+        </Pressable>
     )
 };
 
-const styles = StyleSheet.create({
-    container: {
-        padding: 8,
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    image: {
-        height: 100,
-        width: 100,
-        marginRight: 32
-    },
-    name: {
-        fontWeight: 'bold',
-        fontSize: 32
-    }
-})
 
+
+
+//SIN NATIVE BASE
+/* 
+if( !data || error ) return null; //cambiamos y dejamos de usar los 'pokemon' por 'data'
+if( isLoading ) return <ActivityIndicator />;
+
+return (
+    <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Detail', {name})}>
+        <Image 
+            source={{
+                uri: data.sprites.other['official-artwork'].front_default
+            }}
+            style={styles.image}
+        />
+        <Text style={styles.name}>{data.name}</Text>
+    </TouchableOpacity>
+)
+};
+
+const styles = StyleSheet.create({
+container: {
+    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center'
+},
+image: {
+    height: 100,
+    width: 100,
+    marginRight: 32
+},
+name: {
+    fontWeight: 'bold',
+    fontSize: 32
+}
+})
+ */
