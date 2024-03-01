@@ -28,7 +28,10 @@ export function MainNavigator() {
                 component={Detail}
                 options={{ 
                     presentation: 'modal',
-                    modalTransitionStyle: 'fade'
+                    modalTransitionStyle: 'fade',
+                    headerTitle:'Pokémon',
+                    headerTransparent: true,
+                    headerTintColor: 'white'
                 }} // se supone que tiene que ser modal este Screen pero no esta funcionando correctamente
             />
             <Stack.Screen 

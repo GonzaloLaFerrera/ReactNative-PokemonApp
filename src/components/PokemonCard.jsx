@@ -43,7 +43,7 @@ export const PokemonCard = ({ url, name }) => {
     if( !data || error ) return null; //cambiamos y dejamos de usar los 'pokemon' por 'data'
 
     return (
-        <Pressable flex={1} m="1.5" p="4" backgroundColor={getTypeColor(data.types[0].type.name) + '.500'} borderRadius={10} onPress={() => navigation.navigate('Detail', {name})}>
+        <Pressable flex={1} m="1.5" p="4" backgroundColor={getTypeColor(data.types[0].type.name) + '.500'} borderRadius={10} onPress={() => navigation.navigate('Detail', {name, url})}>
             <Center>
                 <AspectRatio ratio={1} width="80%">
                     <Image 

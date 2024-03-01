@@ -29,3 +29,8 @@ export const typesColors = {
   export const formatNumber = (num) => {
     return num.toString().padStart(3, '0');
   };
+
+  //Formatea texto de la API
+  export const removeEscapeCharacters = (str) => {
+  return str.replace(/[\n\r\t\f]/g, ' ');
+  };
